@@ -34,6 +34,12 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target x86_64-pc-windows-msvc
 
+      - name: Install cargo-wix
+        run: cargo install cargo-wix
+
+      - name: Build MSI Installer
+        run: cargo wix --no-build --nocapture --target x86_64-pc-windows-msvc
+
       - name: Rename binary
         run: |
           Copy-Item target\x86_64-pc-windows-msvc\release\langswitch.exe langswitch.exe
@@ -48,11 +54,18 @@ jobs:
             KDE Plasma–style keyboard layout switcher OSD for Windows.
 
             ### Installation
-            1. Download `langswitch.exe` below
-            2. Run it — tray icon will appear
-            3. Switch layout with `Alt+Shift` or `Win+Space` to see the OSD
 
-            > **Autostart:** Place shortcut in `shell:startup`
-          files: langswitch.exe
+            **Option 1: Installer (Recommended)**
+            Download and run `langswitch-*.msi`. It will install LangSwitch to `C:\Program Files\LangSwitch`, add a Start Menu shortcut, and automatically configure it to run on Windows startup.
+
+            **Option 2: Portable**
+            Download `langswitch.exe` and place it anywhere.
+            > **Autostart:** To run on startup, place a shortcut in `shell:startup`.
+
+            ---
+            **Usage:** Switch layout with `Alt+Shift` or `Win+Space` to see the OSD. Right-click the tray icon to exit.
+          files: |
+            langswitch.exe
+            target/wix/langswitch-*.msi
           draft: false
           prerelease: false
