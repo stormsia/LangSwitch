@@ -1,152 +1,214 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='windows-1252'?>
 <!--
-  LangSwitch WiX Installer
-  Per-Machine install → C:\Program Files\LangSwitch\
-  Autostart via HKCU Run (enabled by default, user can uncheck)
-  Language: English (1033)
+  Copyright (C) 2017 Christopher R. Field.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 -->
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <Product
-    Id="*"
-    Name="LangSwitch"
-    Language="1033"
-    Version="0.1.0"
-    Manufacturer="stormsia"
-    UpgradeCode="3E6EABA7-090A-45B4-9882-BCA22E424735">
+<!--
+  The "cargo wix" subcommand provides a variety of predefined variables available
+  for customization of this template. The values for each variable are set at
+  installer creation time. The following variables are available:
 
-    <Package
-      Description="KDE Plasma-style keyboard layout switcher OSD for Windows"
-      Comments="Displays a smooth OSD indicator when switching keyboard layouts"
-      Manufacturer="stormsia"
-      InstallerVersion="405"
-      Platform="x64"
-      Compressed="yes"
-      InstallScope="perMachine"
-      Languages="1033" />
+  TargetTriple      = The rustc target triple name.
+  TargetEnv         = The rustc target environment. This is typically either
+                      "msvc" or "gnu" depending on the toolchain downloaded and
+                      installed.
+  TargetVendor      = The rustc target vendor. This is typically "pc", but Rust
+                      does support other vendors, like "uwp".
+  CargoTargetBinDir = The complete path to the directory containing the
+                      binaries (exes) to include. The default would be
+                      "target\release\". If an explicit rustc target triple is
+                      used, i.e. cross-compiling, then the default path would
+                      be "target\<CARGO_TARGET>\<CARGO_PROFILE>",
+                      where "<CARGO_TARGET>" is replaced with the "CargoTarget"
+                      variable value and "<CARGO_PROFILE>" is replaced with the
+                      value from the "CargoProfile" variable. This can also
+                      be overridden manually with the "target-bin-dir" flag.
+  CargoTargetDir    = The path to the directory for the build artifacts, i.e.
+                      "target".
+  CargoProfile      = The cargo profile used to build the binaries
+                      (usually "debug" or "release").
+  Version           = The version for the installer. The default is the
+                      "Major.Minor.Fix" semantic versioning number of the Rust
+                      package.
+-->
 
-    <!-- Always upgrade, never allow two versions side-by-side -->
-    <MajorUpgrade
-      DowngradeErrorMessage="A newer version of LangSwitch is already installed." />
+<!--
+  Please do not remove these pre-processor If-Else blocks. These are used with
+  the `cargo wix` subcommand to automatically determine the installation
+  destination for 32-bit versus 64-bit installers. Removal of these lines will
+  cause installation errors.
+-->
+<?if $(sys.BUILDARCH) = x64 or $(sys.BUILDARCH) = arm64 ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+<?else ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+<?endif ?>
 
-    <MediaTemplate EmbedCab="yes" />
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 
-    <!-- ═══════════════════════════════════════════════════
-         PROPERTIES
-    ═══════════════════════════════════════════════════ -->
+    <Product
+        Id='*'
+        Name='langswitch'
+        UpgradeCode='AA4AA6AB-DBCC-4AF8-9DF7-4B4AE7A5F5AB'
+        Manufacturer='stormsia https://github.com/stormsia'
+        Language='1033'
+        Codepage='1252'
+        Version='$(var.Version)'>
 
-    <!-- WixUI: set default install dir to Program Files\LangSwitch -->
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+        <Package Id='*'
+            Keywords='Installer'
+            Description='KDE Plasma–style keyboard layout switcher OSD for Windows. Displays a non-intrusive floating indicator when switching languages.'
+            Manufacturer='stormsia https://github.com/stormsia'
+            InstallerVersion='450'
+            Languages='1033'
+            Compressed='yes'
+            InstallScope='perMachine'
+            SummaryCodepage='1252'
+            />
 
-    <!-- Autostart checkbox: checked (1) by default -->
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT"
-              Value="Start LangSwitch automatically when Windows starts" />
+        <MajorUpgrade
+            Schedule='afterInstallInitialize'
+            DowngradeErrorMessage='A newer version of [ProductName] is already installed. Setup will now exit.'/>
 
-    <!-- Launch app after install checkbox text (optional, same dialog) -->
-    <Property Id="WixShellExecTarget" Value="[#langswitch.exe]" />
-    <CustomAction Id="LaunchApp"
-                  BinaryKey="WixCA"
-                  DllEntry="WixShellExec"
-                  Impersonate="yes" />
+        <Media Id='1' Cabinet='media1.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1'/>
+        <Property Id='DiskPrompt' Value='langswitch Installation'/>
 
-    <!-- ═══════════════════════════════════════════════════
-         UI
-    ═══════════════════════════════════════════════════ -->
-    <UI>
-      <UIRef Id="WixUI_InstallDir" />
+        <Directory Id='TARGETDIR' Name='SourceDir'>
+            <Directory Id='$(var.PlatformProgramFilesFolder)' Name='PFiles'>
+                <Directory Id='APPLICATIONFOLDER' Name='langswitch'>
+                    <!--
+                      Disabling the license sidecar file in the installer is a two step process:
 
-      <!-- Wire the optional exit checkbox to launch the app -->
-      <Publish Dialog="ExitDialog"
-               Control="Finish"
-               Event="DoAction"
-               Value="LaunchApp">
-        WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed
-      </Publish>
-    </UI>
+                      1. Comment out or remove the `Component` tag along with its contents.
+                      2. Comment out or remove the `ComponentRef` tag with the "License" Id
+                         attribute value further down in this file.
+                    -->
+                    <Component Id='License' Guid='*'>
+                        <File Id='LicenseFile'
+                            DiskId='1'
+                            Source='wix\License.rtf'
+                            KeyPath='yes'/>
+                    </Component>
+                    
+                    <Directory Id='Bin' Name='bin'>
+                        <Component Id='Path' Guid='CEAEC5F1-B6C1-48D9-8176-35253DB43505' KeyPath='yes'>
+                            <Environment
+                                Id='PATH'
+                                Name='PATH'
+                                Value='[Bin]'
+                                Permanent='no'
+                                Part='last'
+                                Action='set'
+                                System='yes'/>
+                        </Component>
+                        <Component Id='binary0' Guid='*'>
+                            <File
+                                Id='exe0'
+                                Name='langswitch.exe'
+                                DiskId='1'
+                                Source='$(var.CargoTargetBinDir)\langswitch.exe'
+                                KeyPath='yes'/>
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
 
+        <Feature
+            Id='Binaries'
+            Title='Application'
+            Description='Installs all binaries and the license.'
+            Level='1'
+            ConfigurableDirectory='APPLICATIONFOLDER'
+            AllowAdvertise='no'
+            Display='expand'
+            Absent='disallow'>
+            <!--
+              Comment out or remove the following `ComponentRef` tag to remove
+              the license sidecar file from the installer.
+            -->
+            <ComponentRef Id='License'/>
+            
+            <ComponentRef Id='binary0'/>
 
-    <!-- ═══════════════════════════════════════════════════
-         DIRECTORY STRUCTURE
-    ═══════════════════════════════════════════════════ -->
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFiles64Folder">
-        <Directory Id="INSTALLFOLDER" Name="LangSwitch" />
-      </Directory>
-      <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="LangSwitch" />
-      </Directory>
-    </Directory>
+            <Feature
+                Id='Environment'
+                Title='PATH Environment Variable'
+                Description='Add the install location of the [ProductName] executable to the PATH system environment variable. This allows the [ProductName] executable to be called from any location.'
+                Level='1'
+                Absent='allow'>
+                <ComponentRef Id='Path'/>
+            </Feature>
+        </Feature>
 
-    <!-- ═══════════════════════════════════════════════════
-         COMPONENTS
-    ═══════════════════════════════════════════════════ -->
+        <SetProperty Id='ARPINSTALLLOCATION' Value='[APPLICATIONFOLDER]' After='CostFinalize'/>
 
-    <!-- Main executable -->
-    <DirectoryRef Id="INSTALLFOLDER">
-      <Component Id="MainExecutable"
-                 Guid="E356960B-1CC9-4E03-B45B-D6BBFE5FC985"
-                 Win64="yes">
-        <File Id="langswitch.exe"
-              Source="target\x86_64-pc-windows-msvc\release\langswitch.exe"
-              KeyPath="yes" />
-      </Component>
+        
+        <!--
+          Uncomment the following `Icon` and `Property` tags to change the product icon.
 
-      <!-- Autostart registry entry (HKCU — no UAC needed at runtime) -->
-      <Component Id="AutostartComponent"
-                 Guid="A415A299-9613-417D-90C3-16403D727037"
-                 Win64="yes">
-        <RegistryValue
-          Root="HKCU"
-          Key="Software\Microsoft\Windows\CurrentVersion\Run"
-          Name="LangSwitch"
-          Type="string"
-          Value="[INSTALLFOLDER]langswitch.exe"
-          KeyPath="yes" />
-      </Component>
-    </DirectoryRef>
+          The product icon is the graphic that appears in the Add/Remove
+          Programs control panel for the application.
+        -->
+        <!--<Icon Id='ProductICO' SourceFile='wix\Product.ico'/>-->
+        <!--<Property Id='ARPPRODUCTICON' Value='ProductICO' />-->
 
-    <!-- Start Menu shortcut -->
-    <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="StartMenuShortcut"
-                 Guid="9CC0B235-4964-4892-BF9C-D8E5052666DE"
-                 Win64="yes">
-        <Shortcut Id="AppStartMenuShortcut"
-                  Name="LangSwitch"
-                  Description="KDE-style keyboard layout switcher OSD"
-                  Target="[INSTALLFOLDER]langswitch.exe"
-                  WorkingDirectory="INSTALLFOLDER" />
-        <RemoveFolder Id="CleanupStartMenu"
-                      Directory="ApplicationProgramsFolder"
-                      On="uninstall" />
-        <RegistryValue
-          Root="HKCU"
-          Key="Software\stormsia\LangSwitch"
-          Name="StartMenuInstalled"
-          Type="integer"
-          Value="1"
-          KeyPath="yes" />
-      </Component>
-    </DirectoryRef>
+        <Property Id='ARPHELPLINK' Value='https://github.com/stormsia/LangSwitch'/>
+        
+        <UI>
+            <UIRef Id='WixUI_FeatureTree'/>
+            <!--
+              Disabling the EULA dialog in the installer is a two step process:
 
-    <!-- ═══════════════════════════════════════════════════
-         FEATURES
-    ═══════════════════════════════════════════════════ -->
-    <Feature Id="MainFeature"
-             Title="LangSwitch"
-             Description="Installs LangSwitch keyboard layout switcher."
-             Level="1">
-      <ComponentRef Id="MainExecutable" />
-      <ComponentRef Id="StartMenuShortcut" />
-    </Feature>
+                 1. Uncomment the following two `Publish` tags
+                 2. Comment out or remove the `<WiXVariable Id='WixUILicenseRtf'...` tag further down
 
-    <!-- Autostart as a separate feature so MSI can remove the key on uninstall -->
-    <Feature Id="AutostartFeature"
-             Title="Start with Windows"
-             Description="Automatically start LangSwitch when you log in."
-             Level="1">
-      <ComponentRef Id="AutostartComponent" />
-    </Feature>
+            -->
+            <!--<Publish Dialog='WelcomeDlg' Control='Next' Event='NewDialog' Value='CustomizeDlg' Order='99'>1</Publish>-->
+            <!--<Publish Dialog='CustomizeDlg' Control='Back' Event='NewDialog' Value='WelcomeDlg' Order='99'>1</Publish>-->
+            
+        </UI>
 
-  </Product>
+        <!--
+          Disabling the EULA dialog in the installer requires commenting out
+          or removing the following `WixVariable` tag
+        -->
+        <WixVariable Id='WixUILicenseRtf' Value='wix\License.rtf'/>
+        
+        
+        <!--
+          Uncomment the next `WixVariable` tag to customize the installer's
+          Graphical User Interface (GUI) and add a custom banner image across
+          the top of each screen. See the WiX Toolset documentation for details
+          about customization.
+
+          The banner BMP dimensions are 493 x 58 pixels.
+        -->
+        <!--<WixVariable Id='WixUIBannerBmp' Value='wix\Banner.bmp'/>-->
+
+        
+        <!--
+          Uncomment the next `WixVariable` tag to customize the installer's
+          Graphical User Interface (GUI) and add a custom image to the first
+          dialog, or screen. See the WiX Toolset documentation for details about
+          customization.
+
+          The dialog BMP dimensions are 493 x 312 pixels.
+        -->
+        <!--<WixVariable Id='WixUIDialogBmp' Value='wix\Dialog.bmp'/>-->
+
+    </Product>
+
 </Wix>
