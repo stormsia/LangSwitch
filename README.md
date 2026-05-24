@@ -38,6 +38,11 @@ The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Alt
 
 ## 🚀 Installation
 
+### Option 0 — Via WinGet (recommended)
+
+```cmd
+winget install stormsia.LangSwitch
+```
 ### Option 1 — Download release binary (recommended)
 
 1. Go to [**Releases**](https://github.com/stormsia/LangSwitch/releases)

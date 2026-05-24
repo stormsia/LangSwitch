@@ -54,6 +54,8 @@ jobs:
             KDE Plasma–style keyboard layout switcher OSD for Windows.
 
             ### Installation
+            **Option 0: WinGet (Recommended)**
+            CMD `winget install stormsia.LangSwitch`
 
             **Option 1: Installer (Recommended)**
             Download and run `langswitch-*.msi`. It will install LangSwitch to `C:\Program Files\LangSwitch`, add a Start Menu shortcut, and automatically configure it to run on Windows startup.
@@ -69,3 +71,9 @@ jobs:
             target/wix/langswitch-*.msi
           draft: false
           prerelease: false
+      - name: Publish to WinGet
+              uses: vedantmgoyal9/winget-releaser@v2
+              with:
+                identifier: stormsia.LangSwitch
+                max-retries: 3
+                token: ${{ secrets.WINGET_TOKEN }}
