@@ -98,4 +98,3 @@ Issues and PRs are welcome! If you have ideas for features (multi-monitor improv
 ## 📄 License
 
 MIT © 2026 [stormsia](https://www.google.com/search?q=https://github.com/stormsia)
-
