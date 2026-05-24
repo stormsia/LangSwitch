@@ -1,0 +1,59 @@
+[package]
+name = "langswitch"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+description = "KDE Plasma–style keyboard layout switcher OSD for Windows. Displays a non-intrusive floating indicator when switching languages."
+homepage = "https://github.com/stormsia/LangSwitch"
+repository = "https://github.com/stormsia/LangSwitch"
+readme = "README.md"
+license = "MIT"
+keywords = ["keyboard", "layout", "osd", "windows", "language"]
+categories = ["os::windows-apis", "gui"]
+
+[[bin]]
+name = "langswitch"
+path = "src/main.rs"
+
+[dependencies]
+# Win32 API
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_System_Threading",
+    "Win32_Graphics_Gdi",
+    "Win32_System_LibraryLoader",
+    "Win32_UI_Shell",
+    "Win32_System_SystemInformation",
+] }
+
+# UI для OSD
+slint = "1.6"
+
+# Чтение реестра для системных цветов
+winreg = "0.52"
+
+# Трей
+tray-icon = "0.17"
+
+# Иконки
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+
+# Потоки и каналы
+crossbeam-channel = "0.5"
+
+[build-dependencies]
+winres = "0.1"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+panic = "abort"
+
+[package.metadata.winres]
+OriginalFilename = "langswitch.exe"
+FileDescription = "LangSwitch — Keyboard Layout Switcher"
+ProductName = "LangSwitch"
+LegalCopyright = "Copyright 2026"
