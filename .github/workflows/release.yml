@@ -55,7 +55,9 @@ jobs:
 
             ### Installation
             **Option 0: WinGet (Recommended)**
-            CMD `winget install stormsia.LangSwitch`
+            ```cmd
+            winget install stormsia.LangSwitch
+            ```
 
             **Option 1: Installer (Recommended)**
             Download and run `langswitch-*.msi`. It will install LangSwitch to `C:\Program Files\LangSwitch`, add a Start Menu shortcut, and automatically configure it to run on Windows startup.
@@ -65,15 +67,16 @@ jobs:
             > **Autostart:** To run on startup, place a shortcut in `shell:startup`.
 
             ---
-            **Usage:** Switch layout with `Alt+Shift` or `Win+Space` to see the OSD. Right-click the tray icon to exit.
+            **Usage:** Switch layout with `Ctrl+Alt` or standard Windows shortcuts to see the OSD. Right-click the tray icon to exit.
           files: |
             langswitch.exe
             target/wix/langswitch-*.msi
           draft: false
           prerelease: false
+
       - name: Publish to WinGet
-              uses: vedantmgoyal9/winget-releaser@v2
-              with:
-                identifier: stormsia.LangSwitch
-                max-retries: 3
-                token: ${{ secrets.WINGET_TOKEN }}
+        uses: vedantmgoyal9/winget-releaser@v2
+        with:
+          identifier: stormsia.LangSwitch
+          max-retries: 3
+          token: ${{ secrets.WINGET_TOKEN }}
