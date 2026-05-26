@@ -34,8 +34,9 @@
 
 The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
-![OSD in action](assets/preview.png)
-
+<p align="center">
+  <video src="assets/demo.mp4" autoplay loop muted playsinline width="100%"></video>
+</p>
 ## 🚀 Installation
 
 ### Option 0 — Via WinGet (recommended)
