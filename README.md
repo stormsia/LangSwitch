@@ -34,9 +34,11 @@
 
 The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
-<p align="center">
-  <video src="assets/demo.mp4" autoplay loop muted playsinline width="100%"></video>
-</p>
+## 📸 Preview
+
+The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
+
+![LangSwitch OSD video](https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4)
 ## 🚀 Installation
 
 ### Option 0 — Via WinGet (recommended)
