@@ -30,18 +30,13 @@
 - ⚡ **Minimal footprint** — written in Rust, ~2 MB binary, near-zero CPU/RAM usage
 - 🔕 **No taskbar clutter** — OSD window is completely invisible outside of active display
 
-## 📸 Preview
-
-The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
 ## 📸 Preview
 
 The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
-<video controls loop muted playsinline poster="assets/preview.png" style="max-width:100%;height:auto;">
-	<source src="https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4" type="video/mp4">
-	Your browser does not support the video tag — you can download the video <a href="https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4">here</a>.
-</video>
+https://github.com/user-attachments/assets/674c496f-f325-4eed-a95e-21b9fe093fa0
+
 ## 🚀 Installation
 
 ### Option 0 — Via WinGet (recommended)
