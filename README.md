@@ -38,7 +38,10 @@ The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shi
 
 The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
-![LangSwitch OSD video](https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4)
+<video controls loop muted playsinline poster="assets/preview.png" style="max-width:100%;height:auto;">
+	<source src="https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4" type="video/mp4">
+	Your browser does not support the video tag — you can download the video <a href="https://raw.githubusercontent.com/stormsia/LangSwitch/master/assets/demo.mp4">here</a>.
+</video>
 ## 🚀 Installation
 
 ### Option 0 — Via WinGet (recommended)
