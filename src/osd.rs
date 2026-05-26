@@ -8,8 +8,9 @@ use windows::core::w;
 use windows::Win32::Foundation::POINT;
 use windows::Win32::Graphics::Gdi::{GetMonitorInfoW, MonitorFromPoint, MONITORINFO, MONITOR_DEFAULTTONEAREST};
 use windows::Win32::UI::WindowsAndMessaging::{
-    FindWindowW, GetWindowLongW, SetWindowLongW, ShowWindow, GWL_EXSTYLE, SW_HIDE, SW_SHOWNA,
-    WS_EX_TOOLWINDOW, WS_EX_TOPMOST, WS_EX_TRANSPARENT,
+    FindWindowW, GetWindowLongW, SetWindowLongW, SetWindowPos, ShowWindow, GWL_EXSTYLE, SW_HIDE, SW_SHOWNA,
+    WS_EX_TOOLWINDOW, WS_EX_TRANSPARENT, WS_EX_APPWINDOW,
+    HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE, SWP_NOACTIVATE, SWP_FRAMECHANGED,
 };
 
 slint::slint! {
@@ -188,12 +189,25 @@ fn apply_win32_styles_and_hide() {
             if !hwnd.0.is_null() {
                 // Скрываем, чтобы применить TOOLWINDOW (требование Windows)
                 let _ = ShowWindow(hwnd, SW_HIDE);
-                // Устанавливаем стили: без taskbar, сквозной для кликов, всегда сверху
+                // Устанавливаем стили: убрать из taskbar, сделать сквозным для кликов
+                // Сначала убираем флаг APPWINDOW (он заставляет появляться в таскбаре),
+                // затем добавляем TOOLWINDOW и TRANSPARENT.
                 let mut style = GetWindowLongW(hwnd, GWL_EXSTYLE);
-                style |= WS_EX_TRANSPARENT.0 as i32
-                    | WS_EX_TOOLWINDOW.0 as i32
-                    | WS_EX_TOPMOST.0 as i32;
+                // Сбрасываем WS_EX_APPWINDOW на случай, если Slint установил его по умолчанию
+                style &= !(WS_EX_APPWINDOW.0 as i32);
+                // Устанавливаем нужные расширенные стили (Tool window + transparent)
+                style |= WS_EX_TRANSPARENT.0 as i32 | WS_EX_TOOLWINDOW.0 as i32;
                 SetWindowLongW(hwnd, GWL_EXSTYLE, style);
+                // Применяем изменения фрейма/стилей и делаем окно topmost через SetWindowPos
+                let _ = SetWindowPos(
+                    hwnd,
+                    HWND_TOPMOST,
+                    0,
+                    0,
+                    0,
+                    0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED,
+                );
                 // Оставляем скрытым — show_osd покажет его при необходимости
                 // SW_HIDE уже применён выше, больше ничего не нужно
             }
