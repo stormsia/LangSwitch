@@ -23,7 +23,7 @@
 ## ✨ Features
 
 - 🪟 **KDE Plasma–inspired OSD** — elegant floating indicator appears on layout switch, then fades out automatically
-- ⌨️ **Custom Hotkey Support** — adds `Ctrl+Alt` as a fast and convenient global shortcut for switching languages
+- ⌨️ **Custom Hotkey Support** — adds `Ctrl+Shift` as a fast and convenient global shortcut for switching languages
 - 🎨 **Follows your system theme** — adapts to Windows light/dark mode and accent color
 - 🖱️ **Fully click-through** — the overlay never steals focus or blocks interaction
 - 📌 **Tray icon** — lives quietly in the system tray; right-click to toggle or quit
@@ -32,7 +32,7 @@
 
 ## 📸 Preview
 
-The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Alt` (or standard Windows shortcuts), then smoothly fades out:
+The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Shift` (or standard Windows shortcuts), then smoothly fades out:
 
 ![OSD in action](assets/preview.png)
 
@@ -43,7 +43,12 @@ The OSD popup appears near your cursor for ~1.8 seconds when you press `Ctrl+Alt
 ```cmd
 winget install stormsia.LangSwitch
 ```
-### Option 1 — Download release binary (recommended)
+### Option 1 — Download Installer (Recommended)
+1. Go to [**Releases**](https://github.com/stormsia/LangSwitch/releases)
+2. Download & run `langswitch-*.msi` from the latest release
+3. It will install LangSwitch to C:\Program Files\LangSwitch, add a Start Menu shortcut, and automatically configure it to run on Windows startup.
+
+### Option 2 — Download release binary 
 
 1. Go to [**Releases**](https://github.com/stormsia/LangSwitch/releases)
 2. Download `langswitch.exe` from the latest release
@@ -51,7 +56,7 @@ winget install stormsia.LangSwitch
 
 > **Autostart**: Place a shortcut in `shell:startup` (`Win+R` → type `shell:startup`) to launch on login.
 
-### Option 2 — Build from source
+### Option 3 — Build from source
 
 **Requirements:** [Rust toolchain](https://rustup.rs/) (stable), Windows 10/11
 
@@ -67,16 +72,16 @@ cargo build --release
 
 | Action | Result |
 | --- | --- |
-| Press `Ctrl + Alt` | Switches the language and shows OSD |
+| Press `Ctrl + Shift` | Switches the language and shows OSD |
 | Press standard Windows hotkey | OSD appears with new language, fades in 1.8s |
 | Right-click tray icon → **Intercept keys** | Toggle key interception on/off |
 | Right-click tray icon → **Quit** | Exit LangSwitch |
 
-> LangSwitch provides a built-in `Ctrl+Alt` shortcut, but it also works with whatever hotkey Windows uses for layout switching (e.g., `Alt+Shift` or `Win+Space`).
+> LangSwitch provides a built-in `Ctrl+Shift` shortcut, but it also works with whatever hotkey Windows uses for layout switching (e.g., `Alt+Shift` or `Win+Space`).
 
 ## ⚙️ How it works
 
-1. A **global keyboard hook** intercepts layout-switch key combos (including the built-in `Ctrl+Alt` shortcut)
+1. A **global keyboard hook** intercepts layout-switch key combos (including the built-in `Ctrl+Shift` shortcut)
 2. `ActivateKeyboardLayout` switches the active layout
 3. A **Slint OSD window** with `WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT | WS_EX_TOPMOST` displays the new layout abbreviation near the cursor
 4. The window fades out via opacity animation, then is hidden via Win32 — leaving no trace

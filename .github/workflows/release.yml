@@ -28,14 +28,15 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build release binary
         run: cargo build --release --target x86_64-pc-windows-msvc
 
       - name: Install cargo-wix
-        run: cargo install cargo-wix
+        run: |
+          dotnet tool install --global WiX
+          cargo install cargo-wix --version 0.3.8 --binary-only
 
       - name: Build MSI Installer
         run: cargo wix --no-build --nocapture --target x86_64-pc-windows-msvc
@@ -55,9 +56,9 @@ jobs:
 
             ### Installation
             **Option 0: WinGet (Recommended)**
-            ```cmd
-            winget install stormsia.LangSwitch
-            ```
+            CMD
+            `winget install stormsia.LangSwitch`
+
 
             **Option 1: Installer (Recommended)**
             Download and run `langswitch-*.msi`. It will install LangSwitch to `C:\Program Files\LangSwitch`, add a Start Menu shortcut, and automatically configure it to run on Windows startup.
@@ -67,7 +68,7 @@ jobs:
             > **Autostart:** To run on startup, place a shortcut in `shell:startup`.
 
             ---
-            **Usage:** Switch layout with `Ctrl+Alt` or standard Windows shortcuts to see the OSD. Right-click the tray icon to exit.
+            **Usage:** Switch layout with `Ctrl+Shift` or standard Windows shortcuts to see the OSD. Right-click the tray icon to exit.
           files: |
             langswitch.exe
             target/wix/langswitch-*.msi
@@ -78,5 +79,6 @@ jobs:
         uses: vedantmgoyal9/winget-releaser@v2
         with:
           identifier: stormsia.LangSwitch
-          max-retries: 3
           token: ${{ secrets.WINGET_TOKEN }}
+          fork-user: stormsia
+          installers-regex: ".(exe|msi)$"
