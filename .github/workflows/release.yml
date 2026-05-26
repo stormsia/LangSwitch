@@ -33,11 +33,14 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target x86_64-pc-windows-msvc
 
-      - name: Install cargo-wix
+      - name: Install WiX and cargo-wix
         run: |
           dotnet tool install --global WiX
-          cargo install cargo-wix --version 0.3.8 --binary-only
 
+      - name: Install cargo-wix binary
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-wix@0.3.8
       - name: Build MSI Installer
         run: cargo wix --no-build --nocapture --target x86_64-pc-windows-msvc
 
